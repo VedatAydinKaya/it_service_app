@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 
-namespace itserviceapp
+namespace it_service_app
 {
     public class Program
     {

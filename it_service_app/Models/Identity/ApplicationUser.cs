@@ -14,6 +14,6 @@ namespace it_service_app.Models.Identity
 
         public DateTime CreatedDate { get; set; }= DateTime.Now;
 
-       
+
     }
 }

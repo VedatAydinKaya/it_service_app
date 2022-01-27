@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
-namespace itserviceapp
+namespace it_service_app
 {
     public class Startup
     {
