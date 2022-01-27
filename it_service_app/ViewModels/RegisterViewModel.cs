@@ -22,7 +22,7 @@ namespace it_service_app.ViewModels
         public string Email { get; set; }
 
         [Required(ErrorMessage ="Şifre alanı gereklidir")]
-        [StringLength (50,MinimumLength =6,ErrorMessage ="Sifreniz minimum 6 karakterli olmalıdır!")]
+        [StringLength (50,MinimumLength =6,ErrorMessage ="Minumum sifre 6 karakterli olmalıdır")]
         [Display(Name ="Sifre")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

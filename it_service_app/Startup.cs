@@ -33,16 +33,19 @@ namespace it_service_app
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
-
+                // Password policy
                 options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric=false;
+                options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 5;
 
+                // Lockout policy
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
                 options.Lockout.AllowedForNewUsers = false;
 
-
+                // user policy 
                 options.User.RequireUniqueEmail = true;
                 options.User.AllowedUserNameCharacters =
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
