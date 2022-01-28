@@ -1,3 +1,4 @@
+using System;
 using it_service_app.Data;
 using it_service_app.InjectExample;
 using it_service_app.Models.Identity;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
+
 
 namespace it_service_app
 {
@@ -60,16 +61,16 @@ namespace it_service_app
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
 
-                options.LoginPath = "Account/Login";
-                options.AccessDeniedPath = "Account/AccessDenied";
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
 
 
             });
 
-            services.AddControllersWithViews();
-
             services.AddScoped<IMyDependency, NewMyDependency>();
+
+            services.AddControllersWithViews();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,8 +83,12 @@ namespace it_service_app
 
             app.UseHttpsRedirection();  // adds middleware for redirecting Http request to Https
             app.UseStaticFiles();      //  enables  static file serving for the current request path 
-             
-            app.UseRouting();  
+
+            app.UseRouting();
+
+            app.UseAuthentication(); // adds Authentication which enables authentication enables
+            app.UseAuthorization();  // adds  Authorization which enables authorization enables
+         
 
             app.UseEndpoints(endpoints =>
             {
