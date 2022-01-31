@@ -2,6 +2,7 @@ using System;
 using it_service_app.Data;
 using it_service_app.InjectExample;
 using it_service_app.Models.Identity;
+using it_service_app.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,7 @@ namespace it_service_app
 
 
             });
+            services.AddTransient<IEmailSender, EmailSender>();   // new services for IEmail Sender modul=>
 
             services.AddScoped<IMyDependency, NewMyDependency>();
 

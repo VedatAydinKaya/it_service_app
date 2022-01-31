@@ -1,5 +1,6 @@
 ﻿using it_service_app.Models;
 using it_service_app.Models.Identity;
+using it_service_app.Services;
 using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,11 +19,15 @@ namespace it_service_app.Controllers
 
         private readonly RoleManager<ApplicationRole> _roleManager; // field for check&managing Role in persistence store
 
-        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,RoleManager<ApplicationRole> roleManager) //  gets Model class userManager=>>ApplicationUser
+        private readonly IEmailSender _emailSender; // field for Email Services
+
+        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,RoleManager<ApplicationRole> roleManager,IEmailSender emailSender) //  gets Model class userManager=>>ApplicationUser
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
+
             CheckRoles();
         }
 
@@ -126,7 +131,6 @@ namespace it_service_app.Controllers
         }
 
         [HttpPost]
-
         public async Task<IActionResult> Login(LoginViewModel loginViewModel) 
         {
 
@@ -139,7 +143,12 @@ namespace it_service_app.Controllers
 
             if (result.Succeeded)
             {
-
+                await _emailSender.SendAsync(new EmailMessage()
+                {
+                       Contacts=new string[] {"vedataydinkayaa@gmail.com"},
+                       Body=$"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
+                       Subject=$"Hey {HttpContext.User.Identity.Name}"
+                });
                 return RedirectToAction("Index", "Home");
             }
             else
