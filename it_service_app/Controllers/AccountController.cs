@@ -1,4 +1,5 @@
-﻿using it_service_app.Models;
+﻿using it_service_app.Extensions;
+using it_service_app.Models;
 using it_service_app.Models.Identity;
 using it_service_app.Services;
 using it_service_app.ViewModels;
@@ -157,6 +158,13 @@ namespace it_service_app.Controllers
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
             ViewBag.StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+
+            if (result.Succeeded && _userManager.IsInRoleAsync(user,RoleNames.Passive).Result)
+            {
+                await _userManager.RemoveFromRoleAsync(user, RoleNames.Passive);
+                await _userManager.AddToRoleAsync(user, RoleNames.User);
+            }
+
             return View();
 
         }
@@ -196,13 +204,20 @@ namespace it_service_app.Controllers
             }
             // return View();
        }
-        [Authorize]
+        [Authorize]  // Sİgn Out Authorize 
         public async Task<IActionResult> Logout() 
         {
 
                 await _signInManager.SignOutAsync();
 
                 return RedirectToAction("Index", "Home");
+        }
+        [Authorize]
+        public async Task<IActionResult> Profile() 
+        {
+            var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());
+
+            return View();
         }
 
     }
