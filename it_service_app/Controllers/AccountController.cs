@@ -6,6 +6,7 @@ using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Linq;
 using System.Text;
@@ -18,14 +19,14 @@ namespace it_service_app.Controllers
     {
 
         private readonly UserManager<ApplicationUser> _userManager;  // field for Register Action
-        
+
         private readonly SignInManager<ApplicationUser> _signInManager; // field for Login Action
 
         private readonly RoleManager<ApplicationRole> _roleManager; // field for check&managing Role in persistence store
 
         private readonly IEmailSender _emailSender; // field for Email Services
 
-        public AccountController(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager,RoleManager<ApplicationRole> roleManager,IEmailSender emailSender) //  gets Model class userManager=>>ApplicationUser
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailSender emailSender) //  gets Model class userManager=>>ApplicationUser
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -35,9 +36,9 @@ namespace it_service_app.Controllers
             CheckRoles();
         }
 
-        private void CheckRoles() 
+        private void CheckRoles()
         {
-            foreach (var roleName in RoleNames.Roles )
+            foreach (var roleName in RoleNames.Roles)
             {
                 if (!_roleManager.RoleExistsAsync(roleName).Result)
                 {
@@ -53,26 +54,26 @@ namespace it_service_app.Controllers
         }
 
         [AllowAnonymous]  // Authorization
-        [HttpGet] 
+        [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel) 
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             // Model state Validation
             if (!ModelState.IsValid)
             {
                 registerViewModel.Password = string.Empty;
-                registerViewModel.ConfirmPassword= string.Empty;    
+                registerViewModel.ConfirmPassword = string.Empty;
                 return View(registerViewModel);
             }
-           
-             var user =await _userManager.FindByNameAsync(registerViewModel.UserName);
+
+            var user = await _userManager.FindByNameAsync(registerViewModel.UserName);
             // UserName validation 
-            if (user != null) 
+            if (user != null)
             {
                 ModelState.AddModelError(nameof(registerViewModel.UserName), "Bu kullanıcı adı daha oncede sisteme eklenmistir");
                 return View(registerViewModel);
@@ -80,7 +81,7 @@ namespace it_service_app.Controllers
             // Email validation
             user = await _userManager.FindByEmailAsync(registerViewModel.Email);
 
-            if (user !=null)
+            if (user != null)
             {
                 ModelState.AddModelError(nameof(registerViewModel.Email), "Bu email daha oncede sisteme eklenmistir");
                 return View(registerViewModel);
@@ -115,11 +116,11 @@ namespace it_service_app.Controllers
 
                 // TODO:kullancıya email dogrulama gonderme
 
-               var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                code=WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-                var callBackUrl=Url.Action("ConfirmEmail","Account",new {userId=user.Id,code=code},
-                    protocol:Request.Scheme);
+                var callBackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code },
+                    protocol: Request.Scheme);
 
                 var emailMessage = new EmailMessage()
                 {
@@ -137,29 +138,29 @@ namespace it_service_app.Controllers
             }
             else // not succeeded =>
             {
-                ModelState.AddModelError(string.Empty, "Kayıt isleminde bir hata olustudu");
+                ModelState.AddModelError(string.Empty, ModelState.ToFullErrorString());
                 return View(registerViewModel);
             }
 
-           return View();
+            return View();
         }
 
         [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string userId,string code) 
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId==null || code ==null)
-                return RedirectToAction("Index","Home");
-            
-            var user=await _userManager.FindByIdAsync(userId);
+            if (userId == null || code == null)
+                return RedirectToAction("Index", "Home");
 
-            if (user==null)
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
                 return NotFound($"Unable to load user with ID '{userId}'.");
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
             ViewBag.StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
 
-            if (result.Succeeded && _userManager.IsInRoleAsync(user,RoleNames.Passive).Result)
+            if (result.Succeeded && _userManager.IsInRoleAsync(user, RoleNames.Passive).Result)
             {
                 await _userManager.RemoveFromRoleAsync(user, RoleNames.Passive);
                 await _userManager.AddToRoleAsync(user, RoleNames.User);
@@ -170,14 +171,14 @@ namespace it_service_app.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login() 
+        public IActionResult Login()
         {
             return View();
-        
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginViewModel) 
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
 
             if (!ModelState.IsValid)
@@ -191,9 +192,9 @@ namespace it_service_app.Controllers
             {
                 await _emailSender.SendAsync(new EmailMessage()
                 {
-                       Contacts=new string[] {"vedataydinkayaa@gmail.com"},
-                       Body=$"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
-                       Subject=$"Hey {HttpContext.User.Identity.Name}"
+                    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
+                    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
+                    Subject = $"Hey {HttpContext.User.Identity.Name}"
                 });
                 return RedirectToAction("Index", "Home");
             }
@@ -203,21 +204,81 @@ namespace it_service_app.Controllers
                 return View(loginViewModel);
             }
             // return View();
-       }
+        }
         [Authorize]  // Sİgn Out Authorize 
-        public async Task<IActionResult> Logout() 
+        public async Task<IActionResult> Logout()
         {
 
-                await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
 
-                return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
         [Authorize]
-        public async Task<IActionResult> Profile() 
+        public async Task<IActionResult> Profile()
         {
             var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());
 
-            return View();
+            var model = new UserProfileViewModel()
+            {
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname
+
+            };
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserProfileViewModel userProfileViewModel)
+        {
+            if (!ModelState.IsValid)
+
+                return View(userProfileViewModel);
+            
+
+            var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());
+
+            user.Name = userProfileViewModel.Name;
+            user.Surname = userProfileViewModel.Surname;
+
+
+            if (user.Email != userProfileViewModel.Email)  // if any changed for email adress
+            {
+                await _userManager.RemoveFromRoleAsync(user, RoleNames.User);
+                await _userManager.AddToRoleAsync(user, RoleNames.Passive);
+
+                user.Email = userProfileViewModel.Email;
+                user.EmailConfirmed = false;
+
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var callBackUrl = Url.Action("ConfirmEmail", "Account",
+
+                    new { userId = user.Id, code = code },  protocol: Request.Scheme);
+
+
+                var emailMessage = new EmailMessage()
+                {
+                    Contacts = new string[] { user.Email },
+                    Body =
+                       $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callBackUrl)}'>clicking here</a>.",
+                    Subject = "Confirm your email"
+                };
+
+                await _emailSender.SendAsync(emailMessage);
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, ModelState.ToFullErrorString());
+            }
+
+            return View(userProfileViewModel);
+
         }
 
     }

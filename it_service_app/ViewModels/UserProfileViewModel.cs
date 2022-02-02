@@ -2,7 +2,7 @@
 
 namespace it_service_app.ViewModels
 {
-    public class UserProfileVİewModel
+    public class UserProfileViewModel
     {
         [Required(ErrorMessage ="Ad alanı gereklidir")]
         [Display( Name="Ad")]

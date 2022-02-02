@@ -13,7 +13,9 @@ namespace it_service_app.Extensions
         {
 
             return context.User.Claims.First
-                (x => x.Type == ClaimTypes.NameIdentifier).Value;  
+                (x =>  x.Type == ClaimTypes.NameIdentifier).Value;
+
+            Console.WriteLine();
         }
         public static string ToFullErrorString(this ModelStateDictionary modelState) 
         {
