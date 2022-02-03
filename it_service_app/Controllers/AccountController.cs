@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace it_service_app.Controllers
 {
+    [Authorize] // specifies class  that is applied to requires the specified authorization
     public class AccountController : Controller
     {
 
@@ -57,13 +58,13 @@ namespace it_service_app.Controllers
             System.Console.WriteLine();
         }
 
-        [AllowAnonymous]  // Authorization
+        [AllowAnonymous]  
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
-
+        [AllowAnonymous] // is applied to  does not require authorization
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
@@ -148,7 +149,7 @@ namespace it_service_app.Controllers
 
             return View();
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
@@ -173,14 +174,14 @@ namespace it_service_app.Controllers
             return View();
 
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
             return View();
 
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
@@ -194,12 +195,12 @@ namespace it_service_app.Controllers
 
             if (result.Succeeded)
             {
-                //await _emailSender.SendAsync(new EmailMessage()
-                //{
-                //    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
-                //    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
-                //    Subject = $"Hey {HttpContext.User.Identity.Name}"
-                //});
+                await _emailSender.SendAsync(new EmailMessage()
+                {
+                    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
+                    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
+                    Subject = $"Hey {HttpContext.User.Identity.Name}"
+                });
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -209,7 +210,7 @@ namespace it_service_app.Controllers
             }
             // return View();
         }
-        [Authorize]  // Sİgn Out Authorize 
+       
         public async Task<IActionResult> Logout()
         {
 
@@ -217,7 +218,7 @@ namespace it_service_app.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        [Authorize]
+       
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());  //  b0cdf522-ca1b-45b1-bd96-9be5461aa38a}
@@ -285,6 +286,37 @@ namespace it_service_app.Controllers
             return View(userProfileViewModel);
 
         }
+        public IActionResult PasswordUpdate() 
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> PasswordUpdate(PasswordUpdateViewModel passwordUpdateViewModel) 
+        {
+            if (!ModelState.IsValid)
+                     return View(passwordUpdateViewModel);
+
+            var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());  //b0cdf522-ca1b-45b1-bd96-9be5461aa38a
+
+            var result = await _userManager.ChangePasswordAsync(user, passwordUpdateViewModel.OldPassword, passwordUpdateViewModel.NewPassword);
+
+            if (result.Succeeded)
+            {
+                // send an email
+                TempData["Message"] = "Şifre degiştirme işleminiz başarılı";
+                return View();
+            }
+            else
+            {
+                var message = string.Join("<br>",
+                    result.Errors.Select(x => x.Description));
+                TempData["Message"] = message;
+
+                return View();
+            }
+         
+        }
+        
 
     }
 }

@@ -9,7 +9,7 @@ namespace it_service_app.Extensions
 {
     public static class AppExtensions
     {
-        public static string GetUserId(this HttpContext context) 
+        public static string GetUserId(this HttpContext context)  //"b0cdf522-ca1b-45b1-bd96-9be5461aa38a"
         {
             var claims=context.User.Claims.ToList();
             return context.User.Claims.First
