@@ -1,4 +1,5 @@
-﻿using it_service_app.Extensions;
+﻿using AutoMapper;
+using it_service_app.Extensions;
 using it_service_app.Models;
 using it_service_app.Models.Identity;
 using it_service_app.Services;
@@ -26,12 +27,15 @@ namespace it_service_app.Controllers
 
         private readonly IEmailSender _emailSender; // field for Email Services
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailSender emailSender) //  gets Model class userManager=>>ApplicationUser
+        private readonly IMapper _mapper;     // field for Mapper Services 
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailSender emailSender,IMapper mapper)   //  gets Model class userManager=>>ApplicationUser
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _mapper=mapper;
 
             CheckRoles();
         }
@@ -190,12 +194,12 @@ namespace it_service_app.Controllers
 
             if (result.Succeeded)
             {
-                await _emailSender.SendAsync(new EmailMessage()
-                {
-                    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
-                    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
-                    Subject = $"Hey {HttpContext.User.Identity.Name}"
-                });
+                //await _emailSender.SendAsync(new EmailMessage()
+                //{
+                //    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
+                //    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
+                //    Subject = $"Hey {HttpContext.User.Identity.Name}"
+                //});
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -216,15 +220,16 @@ namespace it_service_app.Controllers
         [Authorize]
         public async Task<IActionResult> Profile()
         {
-            var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());
+            var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());  //  b0cdf522-ca1b-45b1-bd96-9be5461aa38a}
 
-            var model = new UserProfileViewModel()
-            {
-                Email = user.Email,
-                Name = user.Name,
-                Surname = user.Surname
+            //var model = new UserProfileViewModel()
+            //{
+            //    Email = user.Email,
+            //    Name = user.Name,
+            //    Surname = user.Surname
 
-            };
+            //};
+            var model=_mapper.Map<UserProfileViewModel>(user); // Execute a mapping from the source object to a new destination object
 
             return View(model);
         }

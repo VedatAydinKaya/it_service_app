@@ -1,6 +1,7 @@
 using System;
 using it_service_app.Data;
 using it_service_app.InjectExample;
+using it_service_app.MapperProfiles;
 using it_service_app.Models.Identity;
 using it_service_app.Services;
 using Microsoft.AspNetCore.Builder;
@@ -66,9 +67,13 @@ namespace it_service_app
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
-
-
             });
+
+            services.AddAutoMapper(options =>
+            {
+                options.AddProfile(typeof(AccountProfile));
+            });
+          
             services.AddTransient<IEmailSender, EmailSender>();   // new services for IEmail Sender modul=>
 
             services.AddScoped<IMyDependency, NewMyDependency>();
