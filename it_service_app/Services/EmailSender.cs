@@ -57,13 +57,13 @@ namespace it_service_app.Services
             mail.SubjectEncoding = Encoding.UTF8;
             mail.HeadersEncoding = Encoding.UTF8;
 
-            var smptClient = new SmtpClient(this.Smtp, this.SmtpPort)
+            var smtpClient = new SmtpClient(this.Smtp, this.SmtpPort)
             {
                 Credentials = new NetworkCredential(this.SenderMail, this.Password),
                 EnableSsl = true
             };
 
-            await smptClient.SendMailAsync(mail);
+            await smtpClient.SendMailAsync(mail);
 
 
         }

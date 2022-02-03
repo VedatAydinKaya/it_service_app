@@ -30,13 +30,13 @@ namespace it_service_app.Controllers
 
         private readonly IMapper _mapper;     // field for Mapper Services 
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailSender emailSender,IMapper mapper)   //  gets Model class userManager=>>ApplicationUser
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailSender emailSender, IMapper mapper)   //  gets Model class userManager=>>ApplicationUser
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
-            _mapper=mapper;
+            _mapper = mapper;
 
             CheckRoles();
         }
@@ -58,7 +58,7 @@ namespace it_service_app.Controllers
             System.Console.WriteLine();
         }
 
-        [AllowAnonymous]  
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
@@ -210,7 +210,7 @@ namespace it_service_app.Controllers
             }
             // return View();
         }
-       
+
         public async Task<IActionResult> Logout()
         {
 
@@ -218,7 +218,7 @@ namespace it_service_app.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-       
+
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());  //  b0cdf522-ca1b-45b1-bd96-9be5461aa38a}
@@ -230,7 +230,7 @@ namespace it_service_app.Controllers
             //    Surname = user.Surname
 
             //};
-            var model=_mapper.Map<UserProfileViewModel>(user); // Execute a mapping from the source object to a new destination object
+            var model = _mapper.Map<UserProfileViewModel>(user); // Execute a mapping from the source object to a new destination object
 
             return View(model);
         }
@@ -240,7 +240,7 @@ namespace it_service_app.Controllers
             if (!ModelState.IsValid)
 
                 return View(userProfileViewModel);
-            
+
 
             var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());
 
@@ -262,7 +262,7 @@ namespace it_service_app.Controllers
 
                 var callBackUrl = Url.Action("ConfirmEmail", "Account",
 
-                    new { userId = user.Id, code = code },  protocol: Request.Scheme);
+                    new { userId = user.Id, code = code }, protocol: Request.Scheme);
 
 
                 var emailMessage = new EmailMessage()
@@ -286,15 +286,15 @@ namespace it_service_app.Controllers
             return View(userProfileViewModel);
 
         }
-        public IActionResult PasswordUpdate() 
+        public IActionResult PasswordUpdate()
         {
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> PasswordUpdate(PasswordUpdateViewModel passwordUpdateViewModel) 
+        public async Task<IActionResult> PasswordUpdate(PasswordUpdateViewModel passwordUpdateViewModel)
         {
             if (!ModelState.IsValid)
-                     return View(passwordUpdateViewModel);
+                return View(passwordUpdateViewModel);
 
             var user = await _userManager.FindByIdAsync(HttpContext.GetUserId());  //b0cdf522-ca1b-45b1-bd96-9be5461aa38a
 
@@ -314,7 +314,7 @@ namespace it_service_app.Controllers
 
                 return View();
             }
-         
+
         }
 
         [AllowAnonymous]
@@ -325,7 +325,7 @@ namespace it_service_app.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(string email) 
+        public async Task<IActionResult> ResetPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);  // user id ==>> b0cdf522-ca1b-45b1-bd96-9be5461aa38a"
 
@@ -333,7 +333,7 @@ namespace it_service_app.Controllers
                 ViewBag.Message = "Girdiginiz email sistemde bulunamadı";
             else
             {
-                var code=await _userManager.GeneratePasswordResetTokenAsync(user);
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
                 var callBackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
@@ -350,7 +350,53 @@ namespace it_service_app.Controllers
                 ViewBag.Message = "Mailinize sifre guncelleme yonergesi gonderilmistir";
             }
 
-           return View();
+            return View();
+        }
+        [AllowAnonymous]
+
+        public IActionResult ConfirmResetPassword(string userId,string code) 
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+
+                    return BadRequest("Hatalı Istek");
+
+            ViewBag.Code = code;
+            return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public  async Task<IActionResult> ConfirmResetPassword(ResetPasswordViewModel resetPasswordViewModel) 
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(resetPasswordViewModel);
+            }
+            var user = await _userManager.FindByIdAsync(resetPasswordViewModel.UserId);
+            if (user==null)
+            {
+                ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
+                return View();
+            }
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordViewModel.Code, resetPasswordViewModel.NewPassword);
+
+            if (result.Succeeded)
+            {
+                // send an email
+                TempData["Message"] = "Sifre degisikliginiz gercekleşmiştir";
+                return View();
+            }
+            else
+            {
+                var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+                TempData["Message"] = message;
+                return View();
+            }
+
+
+            
+
+        
+             
         }
     }
 }
