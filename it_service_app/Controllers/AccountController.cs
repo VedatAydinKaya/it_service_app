@@ -195,12 +195,12 @@ namespace it_service_app.Controllers
 
             if (result.Succeeded)
             {
-                await _emailSender.SendAsync(new EmailMessage()
-                {
-                    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
-                    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
-                    Subject = $"Hey {HttpContext.User.Identity.Name}"
-                });
+                //await _emailSender.SendAsync(new EmailMessage()
+                //{
+                //    Contacts = new string[] { "vedataydinkayaa@gmail.com" },
+                //    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
+                //    Subject = $"Hey {HttpContext.User.Identity.Name}"
+                //});
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -316,7 +316,41 @@ namespace it_service_app.Controllers
             }
          
         }
-        
 
+        [AllowAnonymous]
+        public IActionResult ResetPassword()
+        {
+            return View();
+
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string email) 
+        {
+            var user = await _userManager.FindByEmailAsync(email);  // user id ==>> b0cdf522-ca1b-45b1-bd96-9be5461aa38a"
+
+            if (user == null)
+                ViewBag.Message = "Girdiginiz email sistemde bulunamadı";
+            else
+            {
+                var code=await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var callBackUrl = Url.Action("ConfirmResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+
+                var emailMessage = new EmailMessage()
+                {
+                    Contacts = new string[] { user.Email },
+                    Body =
+                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callBackUrl)}'>clicking here</a>.",
+                    Subject = "Reset Password"
+                };
+
+                await _emailSender.SendAsync(emailMessage);
+                ViewBag.Message = "Mailinize sifre guncelleme yonergesi gonderilmistir";
+            }
+
+           return View();
+        }
     }
 }
