@@ -354,19 +354,22 @@ namespace it_service_app.Controllers
         }
         [AllowAnonymous]
 
-        public IActionResult ConfirmResetPassword(string userId,string code) 
+        public IActionResult ConfirmResetPassword(string userId,string code)  // userId=b0cdf522-ca1b-45b1-bd96-9be5461aa38a code=Q2ZESjhPY1pKNkVFemNGTm1pczVNSjM3cTZ4ZGxaZjVDSEpqTVNwWVBFQjZBZ1NRM2xLYjE4eWlndFkvS1pzQisvT0V2TmgrOWF6ZmI1cmJ4bm43S2pDOStpbWFsQzR5eUJjN3JvL0UxL1Vscjdjc3NUTlpwZWdGbzJ6cytha0pmTnBJMUdod3JGUmcwTDh3aDJyRWI4ZFRxV2Rab1hrbjRqMUFXTGJSTlkxeHJiQmtlWW41NERpamxoZ3JCd240blluVHZmbDhuY1RNMGZGeXdtbG43TUhmaUZIUW1venRGWUhQUy9vRVhWdENqTUFN
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
 
                     return BadRequest("Hatalı Istek");
 
+
+
             ViewBag.Code = code;
+            ViewBag.UserId=userId;
             return View();
         }
         [AllowAnonymous]
         [HttpPost]
         public  async Task<IActionResult> ConfirmResetPassword(ResetPasswordViewModel resetPasswordViewModel) 
-        {
+            {
             if (!ModelState.IsValid)
             {
                 return View(resetPasswordViewModel);
@@ -377,7 +380,9 @@ namespace it_service_app.Controllers
                 ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
                 return View();
             }
-            var result = await _userManager.ResetPasswordAsync(user, resetPasswordViewModel.Code, resetPasswordViewModel.NewPassword);
+            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(resetPasswordViewModel.Code));
+
+            var result = await _userManager.ResetPasswordAsync(user, code, resetPasswordViewModel.NewPassword);
 
             if (result.Succeeded)
             {

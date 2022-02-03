@@ -16,7 +16,7 @@ namespace it_service_app.ViewModels
         [Compare(nameof(NewPassword),ErrorMessage ="Sifreler uyusmuyor")]
         public string ConfirmNewPassword { get; set; }
 
-        public string Code { get; set; }
+        public string Code { get; set; }  
         public string UserId { get; set; }
     }
 }
