@@ -1,5 +1,6 @@
 ﻿using it_service_app.Models.Payment;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace it_service_app.Services
 {
@@ -23,10 +24,15 @@ namespace it_service_app.Services
 
             }; 
         }
-         
-        public void Pay(PaymentModel paymentModel)
+
+        public List<InstallmentModel> CheckInstallments(string binNumber, decimal price)
         {
-           
+            return null;
+        }
+
+        public PaymentResponseModel Pay(PaymentModel model)
+        {
+            return null;
         }
     }
 }
