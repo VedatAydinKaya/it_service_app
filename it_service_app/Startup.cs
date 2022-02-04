@@ -71,6 +71,10 @@ namespace it_service_app
             });
 
             services.AddApplicationServices(this.Configuration);
+
+            services.AddControllersWithViews();
+
+            //services.AddAuthorization();
         }
 
               

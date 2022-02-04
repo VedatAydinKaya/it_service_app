@@ -20,9 +20,10 @@ namespace it_service_app.Services
                 ApiKey = section["ApiKey"],
                 SecretKey = section["SecretKey"],
                 BaseUrl = section["BaseUrl"],
-                ThreedsCallbackUrl = _options.ThreedsCallbackUrl
+                ThreedsCallbackUrl =section["ThreedsCallbackUrl"]
 
-            }; 
+            };
+            System.Console.WriteLine();
         }
 
         public List<InstallmentModel> CheckInstallments(string binNumber, decimal price)
