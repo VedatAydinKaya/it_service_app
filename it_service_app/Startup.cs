@@ -1,5 +1,6 @@
 using System;
 using it_service_app.Data;
+using it_service_app.Extensions;
 using it_service_app.InjectExample;
 using it_service_app.MapperProfiles;
 using it_service_app.Models.Identity;
@@ -69,17 +70,10 @@ namespace it_service_app
                 options.SlidingExpiration = true;
             });
 
-            services.AddAutoMapper(options =>
-            {
-                options.AddProfile(typeof(AccountProfile));
-            });
-          
-            services.AddTransient<IEmailSender, EmailSender>();   // new services for IEmail Sender modul=>
-
-            services.AddScoped<IMyDependency, NewMyDependency>();
-
-            services.AddControllersWithViews();            
+            services.AddApplicationServices(this.Configuration);
         }
+
+              
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
