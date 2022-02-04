@@ -14,9 +14,11 @@ namespace it_service_app.Extensions
             services.AddAutoMapper(options =>
             {
                 options.AddProfile(typeof(AccountProfile));
+                options.AddProfile(typeof(PaymentProfile));
             });
 
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IPaymentService, IyzicoPaymentService>(); 
             services.AddScoped<IMyDependency, NewMyDependency>();
 
             return services;
