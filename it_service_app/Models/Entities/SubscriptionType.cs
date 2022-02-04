@@ -8,5 +8,7 @@ namespace it_service_app.Models.Entities
         public string Name { get; set; }
         public string Descripiton { get; set; }
         public int  Month { get; set; }
+
+     
     }
 }
