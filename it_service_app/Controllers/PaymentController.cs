@@ -1,6 +1,9 @@
-﻿using it_service_app.Services;
+﻿using it_service_app.Models.Payment;
+using it_service_app.Services;
+using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace it_service_app.Controllers
 {
@@ -34,5 +37,24 @@ namespace it_service_app.Controllers
             var result = _paymentService.CheckInstallments(binNumber, 1000);
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Index(PaymentViewModel paymentViewModel)
+        {
+            var paymentModel = new PaymentModel()
+            {
+                 Installment= paymentViewModel.Installment,
+                 Address=paymentViewModel.AddressModel,
+                 BasketList=new List<BasketModel>() { paymentViewModel.BasketModel },
+                 CardModel=paymentViewModel.CardModel,
+                 Customer=new CustomerModel(),
+                 Price=1000
+                  
+            };
+            var result = _paymentService.Pay(paymentModel);     
+            return View();
+        }
+
     }
 }
