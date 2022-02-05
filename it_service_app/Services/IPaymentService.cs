@@ -6,7 +6,7 @@ namespace it_service_app.Services
     public interface IPaymentService
     {
 
-        public List<InstallmentModel> CheckInstallments(string binNumber, decimal price);
+        public InstallmentModel CheckInstallments(string binNumber, decimal price);
 
         public PaymentResponseModel Pay(PaymentModel model);
     }

@@ -20,5 +20,19 @@ namespace it_service_app.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult CheckInstallment(string binNumber) 
+        {
+            if (binNumber.Length != 6)
+                return BadRequest(new
+                {
+                    Message = "Bad req."
+                });
+
+            var result = _paymentService.CheckInstallments(binNumber, 1000);
+            return Ok(result);
+        }
     }
 }
