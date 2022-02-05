@@ -60,10 +60,10 @@ namespace it_service_app.Services
                 throw new Exception("Hatalı Istek Olusturuldu");
             }
 
-            InstallmentModel  resultModel= _mapper.Map<InstallmentModel>(result.InstallmentDetails[0]); // <Tdestination>(object source) = executes mapping from source object to T destination
+            var  resultModel= _mapper.Map<InstallmentModel>(result.InstallmentDetails[0]); // <Tdestination>(object source) = executes mapping from source object to T destination
 
             Console.WriteLine();
-            return null;
+            return resultModel;
         }
         public PaymentResponseModel Pay(PaymentModel model)
         {

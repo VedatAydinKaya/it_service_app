@@ -13,8 +13,9 @@ namespace it_service_app.Extensions
         {
             services.AddAutoMapper(options =>
             {
-                options.AddProfile(typeof(AccountProfile));
                 options.AddProfile(typeof(PaymentProfile));
+                options.AddProfile(typeof(AccountProfile));
+               
             });
 
             services.AddTransient<IEmailSender, EmailSender>();
