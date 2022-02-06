@@ -45,6 +45,7 @@ namespace it_service_app.Services
 
             var paymentRequest = new CreatePaymentRequest()
             {
+
                 Installment = paymentModel.Installment,
                 Locale = Locale.TR.ToString(),
                 ConversationId = GenerateConverstaionId(),
@@ -53,11 +54,12 @@ namespace it_service_app.Services
                 Currency = Currency.TRY.ToString(),
                 BasketId = GenerateConverstaionId(),
                 PaymentChannel = PaymentChannel.WEB.ToString(),
-                PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString()
+                PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString(),    
             };
 
-            var user = _userManager.FindByIdAsync(paymentModel.UserId).Result;
+            paymentRequest.PaymentCard = _mapper.Map<PaymentCard>(paymentModel.CardModel);  // creates mapping confiugaration from  Cardmodel to PaymentCard mapping configuration dobe
 
+            var user = _userManager.FindByIdAsync(paymentModel.UserId).Result;
 
             var buyer = new Buyer()
             {
@@ -67,9 +69,9 @@ namespace it_service_app.Services
                 GsmNumber = user.PhoneNumber,
                 Email =user.Email,
                 IdentityNumber ="11111111110",
-                LastLoginDate = $"{DateTime.Now:G}",
-                RegistrationDate =$"{user.CreatedDate}",
-                RegistrationAddress = "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                LastLoginDate = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                RegistrationDate =$"{user.CreatedDate:yyyy-MM-dd HH:mm:ss}",
+                RegistrationAddress = "Cihannuma Mah. Barbaros Bulvarı No:9 Beşiktaş",
                 Ip = paymentModel.Ip,
                 City = "Istanbul",
                 Country = "Turkey",
@@ -79,16 +81,32 @@ namespace it_service_app.Services
 
             paymentRequest.Buyer = buyer;
 
-            Address shippingAdress = new Address()
+            var  billingAdress = new Address()
             {
-                ContactName = "Jane Doe",
+                ContactName =$"{user.Name} {user.Surname}",
                 City = "Istanbul",
                 Country = "Turkey",
-                Description = "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                Description = "Cihannuma Mah. Barbaros Bulvarı No:9 Beşiktaş",
                 ZipCode = "3473"
             };
 
-            paymentRequest.ShippingAddress = shippingAdress;
+            paymentRequest.BillingAddress= billingAdress;
+
+
+            var basketItems = new List<BasketItem>();
+
+            var firstBasketItem = new BasketItem()
+            {
+                Id = "BI101",
+                Name = "Binocular",
+                Category1 = "Collectibles",
+                Category2 = "Accessories",
+                ItemType = BasketItemType.VIRTUAL.ToString(),  // not required for ShippingAdress
+                Price = paymentModel.Price.ToString(),
+            };
+            basketItems.Add(firstBasketItem);
+
+            paymentRequest.BasketItems = basketItems;
 
             return paymentRequest;
         }
@@ -126,7 +144,7 @@ namespace it_service_app.Services
             var request = this.InitialPaymentRequest(paymentModel); // return CreatePaymentRequest
             var payment = Payment.Create(request, _options);
 
-            return null;
+            return _mapper.Map<PaymentResponseModel>(payment);
         }
     }
 }

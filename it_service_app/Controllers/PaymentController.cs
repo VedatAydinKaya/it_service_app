@@ -42,7 +42,7 @@ namespace it_service_app.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Index(PaymentViewModel paymentViewModel)
+        public IActionResult Index(PaymentViewModel paymentViewModel)  // 5400360000000003
         {
             var paymentModel = new PaymentModel()
             {
@@ -58,18 +58,12 @@ namespace it_service_app.Controllers
 
             var installmentInfo = _paymentService.CheckInstallments(paymentModel.CardModel.CardNumber.Substring(0, 6), paymentModel.Price); // InstallmentModel 
 
-            var installmentNumber = installmentInfo.InstallmentPrices.FirstOrDefault(x => x.InstallmentNumber == paymentViewModel.Installment);
+            var installmentNumber = installmentInfo.InstallmentPrices.FirstOrDefault(x => x.InstallmentNumber == paymentViewModel.Installment); // x=>InstallmentPriceModel
 
-            if (installmentNumber!=null)
-            {
-                paymentModel.PaidPrice = decimal.Parse(installmentNumber.TotalPrice);
-            }
-            else
-            {
-                paymentModel.PaidPrice = decimal.Parse(installmentInfo.InstallmentPrices[0].TotalPrice);
-            }
+            paymentModel.PaidPrice = decimal.Parse(installmentNumber != null ? installmentNumber.TotalPrice.Replace('.', ',') : installmentInfo.InstallmentPrices[0].TotalPrice.Replace('.', ','));
 
-            var result = _paymentService.Pay(paymentModel);     
+            var result = _paymentService.Pay(paymentModel);
+            
             return View();
         }
 

@@ -8,12 +8,13 @@ namespace it_service_app.MapperProfiles
     {
         public PaymentProfile()
         {
-            CreateMap<CardModel, Card>().ReverseMap();
+            CreateMap<CardModel, PaymentCard>(); // this allows for two-way mapping
             CreateMap<BasketModel, BasketItem>().ReverseMap();
             CreateMap<AddressModel, Address>().ReverseMap();
             CreateMap<CustomerModel, Buyer>().ReverseMap();
             CreateMap<InstallmentPriceModel, InstallmentPrice>().ReverseMap();
             CreateMap<InstallmentModel, InstallmentDetail>().ReverseMap();
+            CreateMap<PaymentResponseModel,Payment>().ReverseMap();  
         }
     }
 }
