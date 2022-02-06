@@ -56,7 +56,7 @@ namespace it_service_app.Controllers
                 Ip=Request.HttpContext.Connection.RemoteIpAddress?.ToString(),                  
             };
 
-            var installmentInfo = _paymentService.CheckInstallments(paymentModel.CardModel.CardNumber.Substring(0, 6), paymentModel.Price);
+            var installmentInfo = _paymentService.CheckInstallments(paymentModel.CardModel.CardNumber.Substring(0, 6), paymentModel.Price); // InstallmentModel 
 
             var installmentNumber = installmentInfo.InstallmentPrices.FirstOrDefault(x => x.InstallmentNumber == paymentViewModel.Installment);
 
@@ -68,7 +68,6 @@ namespace it_service_app.Controllers
             {
                 paymentModel.PaidPrice = decimal.Parse(installmentInfo.InstallmentPrices[0].TotalPrice);
             }
-
 
             var result = _paymentService.Pay(paymentModel);     
             return View();

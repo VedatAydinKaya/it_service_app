@@ -42,30 +42,35 @@ namespace it_service_app.Services
 
         private CreatePaymentRequest InitialPaymentRequest(PaymentModel paymentModel)
         {
-            var paymentRequest = new CreatePaymentRequest();
 
-            paymentRequest.Installment = paymentModel.Installment;
-            paymentRequest.Locale = Locale.TR.ToString();
-            paymentRequest.ConversationId = GenerateConverstaionId();
-            paymentRequest.Price = paymentModel.Price.ToString();
-            paymentRequest.PaidPrice = paymentModel.PaidPrice.ToString();
-            paymentRequest.Currency = Currency.TRY.ToString();
-            paymentRequest.BasketId = StringHelpers.GenerateUniqueCode();
-            paymentRequest.PaymentChannel = PaymentChannel.WEB.ToString();
-            paymentRequest.PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString();
+            var paymentRequest = new CreatePaymentRequest()
+            {
+                Installment = paymentModel.Installment,
+                Locale = Locale.TR.ToString(),
+                ConversationId = GenerateConverstaionId(),
+                Price = paymentModel.Price.ToString(new CultureInfo("en-US")),
+                PaidPrice = paymentModel.PaidPrice.ToString(new CultureInfo("en-US")),
+                Currency = Currency.TRY.ToString(),
+                BasketId = GenerateConverstaionId(),
+                PaymentChannel = PaymentChannel.WEB.ToString(),
+                PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString()
+            };
+
+            var user = _userManager.FindByIdAsync(paymentModel.UserId).Result;
+
 
             var buyer = new Buyer()
             {
-                Id = "BY789",
-                Name = "John",
-                Surname = "Doe",
-                GsmNumber = "+905350000000",
-                Email = "email@email.com",
-                IdentityNumber = "74300864791",
-                LastLoginDate = "2015-10-05 12:43:35",
-                RegistrationDate = "2013-04-21 15:12:09",
+                Id = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                GsmNumber = user.PhoneNumber,
+                Email =user.Email,
+                IdentityNumber ="11111111110",
+                LastLoginDate = $"{DateTime.Now:G}",
+                RegistrationDate =$"{user.CreatedDate}",
                 RegistrationAddress = "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
-                Ip = "85.34.78.112",
+                Ip = paymentModel.Ip,
                 City = "Istanbul",
                 Country = "Turkey",
                 ZipCode = "3473"
@@ -73,6 +78,17 @@ namespace it_service_app.Services
             };
 
             paymentRequest.Buyer = buyer;
+
+            Address shippingAdress = new Address()
+            {
+                ContactName = "Jane Doe",
+                City = "Istanbul",
+                Country = "Turkey",
+                Description = "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                ZipCode = "3473"
+            };
+
+            paymentRequest.ShippingAddress = shippingAdress;
 
             return paymentRequest;
         }
