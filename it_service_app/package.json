@@ -1,0 +1,23 @@
+{
+  "name": "itserviceapp",
+  "version": "1.0.0",
+  "description": "ITSERVICEAPP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VedatAydinKaya/it_service_app.git"
+  },
+  "author": "Vedat Aydın Kaya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VedatAydinKaya/it_service_app/issues"
+  },
+  "homepage": "https://github.com/VedatAydinKaya/it_service_app#readme",
+  "dependencies": {
+    "devextreme": "^21.2.5",
+    "devextreme-aspnet-data": "^2.8.6"
+  }
+}
