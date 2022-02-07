@@ -98,7 +98,7 @@ namespace it_service_app
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapAreaControllerRoute("admin","area","admin/{controller=Manage}/{action=Index}/{id?}");
+                endpoints.MapAreaControllerRoute("default","admin","admin/{controller=Manage}/{action=Index}/{id?}");
 
                 endpoints.MapControllerRoute(
                       name: "default",
