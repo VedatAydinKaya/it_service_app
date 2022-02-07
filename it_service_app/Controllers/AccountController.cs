@@ -201,7 +201,7 @@ namespace it_service_app.Controllers
                 //    Body = $"{HttpContext.User.Identity.Name}  Sisteme giriş yaptı!",
                 //    Subject = $"Hey {HttpContext.User.Identity.Name}"
                 //});
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home",new { area= "" });
             }
             else
             {
