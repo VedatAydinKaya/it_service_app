@@ -1,7 +1,9 @@
 ﻿using it_service_app.Models.Identity;
+using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace it_service_app.Areas.Admin.Controllers
@@ -23,6 +25,23 @@ namespace it_service_app.Areas.Admin.Controllers
             var users = _userManager.Users.OrderBy(x => x.CreatedDate).ToList();
               
                 return Ok(users);
+        }
+        [HttpGet]
+        public IActionResult GetTest() 
+        {
+            var users = new List<UserProfileViewModel>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                users.Add(new()
+                {
+                    Email = "Deneme" + i,
+                    Name = "soyad" + i,
+                    Surname = "ad" + i
+                });
+            }
+
+            return Ok(users);
         }
     }
 }
