@@ -4,7 +4,7 @@ namespace it_service_app.ViewModels
 {
     public class ResetPasswordViewModel
     {
-        [Required(ErrorMessage ="Eski sifre alanı gereklidir")]
+        [Required(ErrorMessage ="Yeni sifre alanı gereklidir")]
         [StringLength(100,MinimumLength =6,ErrorMessage ="Sifreniz minumum 6 karakterli olmalıdır")]
         [Display(Name ="Yeni sifre")]
         [DataType(DataType.Password)]
