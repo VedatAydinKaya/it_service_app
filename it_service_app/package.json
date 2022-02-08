@@ -18,6 +18,7 @@
   "homepage": "https://github.com/VedatAydinKaya/it_service_app#readme",
   "dependencies": {
     "devextreme": "^21.2.5",
-    "devextreme-aspnet-data": "^2.8.6"
+    "devextreme-aspnet-data": "^2.8.6",
+    "jquery": "^3.6.0"
   }
 }

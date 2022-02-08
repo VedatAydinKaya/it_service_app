@@ -10,10 +10,14 @@ namespace it_service_app.Areas.Admin.Controllers
             return View();
         }
         [AllowAnonymous]
-        public IActionResult Login() 
+        public IActionResult Login()
         {
             return View();
-         
+
+        }
+        public IActionResult Users() 
+        {
+            return View();
         }
     }
 }

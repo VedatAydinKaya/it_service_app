@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using it_service_app.Data;
 using it_service_app.Extensions;
 using it_service_app.InjectExample;
@@ -7,10 +8,12 @@ using it_service_app.Models.Identity;
 using it_service_app.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 
@@ -89,6 +92,12 @@ namespace it_service_app
 
             app.UseHttpsRedirection();  // adds middleware for redirecting Http request to Https
             app.UseStaticFiles();      //  enables  static file serving for the current request path 
+            app.UseStaticFiles(new StaticFileOptions()   // enables static files serving for the given request path
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"node_modules")),
+                RequestPath = new PathString("/vendor")
+
+            }) ;            
 
             app.UseRouting();
 
