@@ -44,10 +44,12 @@
 @section Scripts{
 
 
-  <script>
- 
+<script>
+
+    var dataGrid=null;
+
     $(()=>{
-    
+
           var userData=null;
 
           $.ajax({
@@ -64,7 +66,7 @@
                           loadGrid();
                      }
                      else{
-                           alert(response.ErrorMessage);     
+                           alert(response.ErrorMessage);
                      }
                },
 
@@ -76,14 +78,14 @@
                }
           });
           function loadGrid(){
-              
-              $('#dxGrid').dxDataGrid({
-              
+
+             dataGrid=$('#dxGrid').dxDataGrid({
+
                    showColumnLines:true,
                    allowColumnResizing:true,
                    showRowLines:true,
                    rowAlternationEnabled:true,
-                   showBorders:true,   
+                   showBorders:true,
                    dataSource:userData,
                    searchPanel:{
                          visible:true,
@@ -110,6 +112,9 @@
                     allowedPageSizes:[5,15,30,45],
                     showInfo:true
                    },
+                   selection:{
+                       mode:"multiple"
+                   },
                    columns:[
                        {
                            caption:'Id',
@@ -118,7 +123,6 @@
                            allowFiltering:false
                        },
                        {
-                          caption:'Ad',
                           caption:'Ad',
                           dataField:"name"
                        },
@@ -129,12 +133,26 @@
                         {
                              caption:'Email',
                              dataField:"email"
+                       },
+                       {
+                           caption:'Detay',
+                           cellTemplate:function(container,options)
+                           {
+                               var current=options.data;
+                               var url='@Url.Action("UserDetail","Manage")'+ '/' + current.id;
+                               $("<a href="+url+ "/>")
+                                .text("Detay")
+                                .addClass('btn btn-block btn-info btn-sm')
+                                .appendTo(container);
+                           }
+
                        }
+
                    ]
-              });
+              }).dxDataGrid("instance");
           }
-    
+
     })
 
-  </script>
+</script>
 }
