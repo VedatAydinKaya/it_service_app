@@ -24,7 +24,11 @@ namespace it_service_app.Areas.Admin.Controllers
         {
             var users = _userManager.Users.OrderBy(x => x.CreatedDate).ToList();
 
-            return Ok(users);
+            return Ok(new JSonResponseViewModel()
+            {
+                Data = users
+
+            }) ;
         }
         [HttpGet]
         public IActionResult GetTest()
