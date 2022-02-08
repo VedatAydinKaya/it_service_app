@@ -10,24 +10,24 @@ namespace it_service_app.Areas.Admin.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserApiController : ControllerBase // A  base class for an MVC without view support
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
         public UserApiController(UserManager<ApplicationUser> userManager)
         {
-                _userManager = userManager;
+            _userManager = userManager;
         }
         [HttpGet]
         public IActionResult GetUsers()
         {
             var users = _userManager.Users.OrderBy(x => x.CreatedDate).ToList();
-              
-                return Ok(users);
+
+            return Ok(users);
         }
         [HttpGet]
-        public IActionResult GetTest() 
+        public IActionResult GetTest()
         {
             var users = new List<UserProfileViewModel>();
 
@@ -41,7 +41,11 @@ namespace it_service_app.Areas.Admin.Controllers
                 });
             }
 
-            return Ok(users);
+            return Ok(new JSonResponseViewModel()
+            {
+                Data = users
+
+            });
         }
     }
 }
