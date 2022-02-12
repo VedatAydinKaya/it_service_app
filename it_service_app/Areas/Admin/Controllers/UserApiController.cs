@@ -1,4 +1,6 @@
-﻿using it_service_app.Models.Identity;
+﻿using DevExtreme.AspNet.Data;
+using it_service_app.Extensions;
+using it_service_app.Models.Identity;
 using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,15 +22,12 @@ namespace it_service_app.Areas.Admin.Controllers
             _userManager = userManager;
         }
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers(DataSourceLoadOptions loadOptions)
         {
-            var users = _userManager.Users.OrderBy(x => x.CreatedDate).ToList();
 
-            return Ok(new JSonResponseViewModel()
-            {
-                Data = users
+            var data = _userManager.Users;
 
-            }) ;
+            return Ok(DataSourceLoader.Load(data, loadOptions));
         }
         [HttpGet]
         public IActionResult GetTest()
