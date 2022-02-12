@@ -59,9 +59,10 @@
                 dataSource: DevExpress.data.AspNet.createStore({
                     key: 'id',
                     loadUrl: `${url}/getusers`,
-                    updateUrl:`${url}/updateusers`
+                    updateUrl: `${url}/updateusers`
+                   
                 }),
-                  editing: {
+                editing: {
                     mode: 'form',
                     allowUpdating: true
                 },
@@ -104,7 +105,7 @@
                         dataField: "id",
                         visible: false,
                         allowFiltering: false,
-                        formItem:{visible:false}
+                        formItem: { visible: false }
                     },
                     {
                         caption: 'Ad',
@@ -141,9 +142,40 @@
                                 .appendTo(container);
 
                         },
-                        formItem:{visible:false}
+                        formItem: { visible: false }
                     }
-                ]
+                ],
+                masterDetail: {
+                    enabled: true,
+                    template(container, options) {
+                        var currentUser = options.data;
+                        $('<div>')
+                            .dxDataGrid({
+                                columnAutoWidth: true,
+                                showBorders: true,
+                                columns: ['Subject', {
+                                    dataField: 'StartDate',
+                                    dataType: 'date',
+                                }, {
+                                    dataField: 'DueDate',
+                                    dataType: 'date',
+                                }, 'Priority', {
+                                    caption: 'Completed',
+                                    dataType: 'boolean',
+                                    calculateCellValue(rowData) {
+                                        return rowData.Status === 'Completed';
+                                    },
+                                }],
+                                remoteOperations: { paging: true, filtering: true, sorting: true, grouping: true, summary: true, groupPaging: true },
+                                dataSource: DevExpress.data.AspNet.createStore({
+                                    key: 'id',
+                                    loadUrl: `${url}/getusers`,
+                                    updateUrl: `${url}/updateusers`
+                                 
+                                }),
+                            }).appendTo(container);
+                    },
+                },
             }).dxDataGrid("instance");
         }
 
