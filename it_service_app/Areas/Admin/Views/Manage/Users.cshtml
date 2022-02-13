@@ -60,7 +60,7 @@
                     key: 'id',
                     loadUrl: `${url}/getusers`,
                     updateUrl: `${url}/updateusers`
-
+               
                 }),
                 editing: {
                     mode: 'form',
@@ -168,7 +168,7 @@
                                     },
                                     {
                                         caption : "İl",
-                                        dataField: "state.city.name",
+                                        dataField: "state.city.id",
                                         lookup: {
                                             dataSource: {
                                                 store: DevExpress.data.AspNet.createStore({
@@ -181,15 +181,16 @@
                                             displayExpr: "text",
                                             valueExpr: "value"
                                         }
-                                    },
+                                    }, 
                                     {
                                         caption : "İlçe",
-                                        dataField: "state.name",
+                                        dataField: "state.id",
                                         lookup: {
                                             dataSource: {
                                                 store: DevExpress.data.AspNet.createStore({
                                                     key: "id",
-                                                    loadUrl: "../../../api/addressapi/statelookup"
+                                                    loadUrl: "../../../api/addressapi/statelookup",
+                                                    
                                                 }),
                                                 _fnFeatureHtmlPaginate: true,
                                                 pageSize: 10
@@ -213,7 +214,7 @@
                                     insertUrl: "../../../api/addressapi/insert",
                                     updateUrl: "../../../api/addressapi/update",
                                     deleteUrl: "../../../api/addressapi/delete"
-
+                                  
                                 })
                             }).appendTo(container);
                     },

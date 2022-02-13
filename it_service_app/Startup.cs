@@ -15,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-
+using Newtonsoft.Json;
 
 namespace it_service_app
 {
@@ -44,7 +44,7 @@ namespace it_service_app
                 // Password policy
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric=false;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 5;
 
@@ -65,7 +65,7 @@ namespace it_service_app
             {
                 // Cookie settings
 
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 
 
                 options.LoginPath = "/Account/Login";
@@ -73,14 +73,19 @@ namespace it_service_app
                 options.SlidingExpiration = true;
             });
 
+
             services.AddApplicationServices(this.Configuration);
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
 
             //services.AddAuthorization();
         }
 
-              
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -97,17 +102,17 @@ namespace it_service_app
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"node_modules")),
                 RequestPath = new PathString("/vendor")
 
-            }) ;            
+            });
 
             app.UseRouting();
 
             app.UseAuthentication(); // adds Authentication which enables authentication enables
             app.UseAuthorization();  // adds  Authorization which enables authorization enables
-         
+
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapAreaControllerRoute("default","admin","admin/{controller=Manage}/{action=Index}/{id?}");
+                endpoints.MapAreaControllerRoute("default", "admin", "admin/{controller=Manage}/{action=Index}/{id?}");
 
                 endpoints.MapControllerRoute(
                       name: "default",

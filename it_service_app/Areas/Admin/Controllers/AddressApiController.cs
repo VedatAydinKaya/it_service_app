@@ -5,6 +5,7 @@ using it_service_app.Models.Entities;
 using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -26,8 +27,10 @@ namespace it_service_app.Areas.Admin.Controllers
         public IActionResult Get(string userId,DataSourceLoadOptions options)
         {
 
-            var data = _dbContext.Addresses.Where(x => x.UserId == userId);
-
+            var data = _dbContext.Addresses
+                         .Include(x => x.State)
+                          .ThenInclude(x => x.City)
+                           .Where(x => x.UserId == userId);
 
             return Ok(DataSourceLoader.Load(data, options));
         }
@@ -134,9 +137,10 @@ namespace it_service_app.Areas.Admin.Controllers
             return Ok(DataSourceLoader.Load(data, loadOptions));
         }
         [HttpGet]
-        public object StateLookUp(DataSourceLoadOptions loadOptions) 
+        public object StateLookUp(int cityId,DataSourceLoadOptions loadOptions) 
         {
             var data = _dbContext.States
+              .Where(x=>x.CityId==cityId)
               .OrderBy(x => x.Name)
               .Select(x => new
               {
