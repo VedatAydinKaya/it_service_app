@@ -21,11 +21,13 @@ namespace it_service_app.Areas.Admin.Controllers
         {
             _dbContext = dbContext;
         }
+        #region Cruds
         [HttpGet]
-        public IActionResult Get(DataSourceLoadOptions options)
+        public IActionResult Get(string userId,DataSourceLoadOptions options)
         {
 
-            var data = _dbContext.Addresses;
+            var data = _dbContext.Addresses.Where(x => x.UserId == userId);
+
 
             return Ok(DataSourceLoader.Load(data, options));
         }
@@ -67,7 +69,7 @@ namespace it_service_app.Areas.Admin.Controllers
 
             return Ok(new JSonResponseViewModel());             
         }
-        [HttpPut("update")]
+        [HttpPut]
         public async Task<IActionResult> Update(Guid key, string values)
         {
             var data = _dbContext.Addresses.Find(key);
@@ -98,6 +100,52 @@ namespace it_service_app.Areas.Admin.Controllers
             return Ok(new JSonResponseViewModel());
 
         }
+        [HttpDelete]
+        public IActionResult Delete(Guid key) 
+        {
+            var data = _dbContext.Addresses.Find(key);
 
+            if (data == null)
+                return StatusCode(StatusCodes.Status409Conflict, "Adres bulunamadı");
+
+            _dbContext.Addresses.Remove(data);
+
+            var result = _dbContext.SaveChanges();
+
+            if (result == 0)
+                return BadRequest("Silme islemi basarısız");
+
+            return Ok(new JSonResponseViewModel());
+
+        #endregion
+        }
+        [HttpGet]
+        public object CityLookUp(DataSourceLoadOptions loadOptions) 
+        {
+            var data = _dbContext.Cities
+              .OrderBy(x => x.Id)
+              .Select(x => new
+              {
+                id=x.Id,
+                Value=x.Id,
+                Text=$"{x.Name}"
+              });
+
+            return Ok(DataSourceLoader.Load(data, loadOptions));
+        }
+        [HttpGet]
+        public object StateLookUp(DataSourceLoadOptions loadOptions) 
+        {
+            var data = _dbContext.States
+              .OrderBy(x => x.Name)
+              .Select(x => new
+              {
+                   id= x.Id,
+                   Value=x.Id,
+                   Text=$"{x.Name}"
+              });
+
+            return Ok(DataSourceLoader.Load(data, loadOptions));
+        }
     }
 }
