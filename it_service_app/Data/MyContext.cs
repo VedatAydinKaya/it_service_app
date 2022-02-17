@@ -13,11 +13,31 @@ namespace it_service_app.Data
         {
 
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<SubscriptionType>()
+                .Property(x => x.Price)
+                .HasPrecision(8, 2);
+
+            builder.Entity<Subscription>()
+                .Property(x => x.Amount)
+                .HasPrecision(8, 2);
+
+            builder.Entity<Subscription>()
+                .Property(x => x.PaidAmount)
+                .HasPrecision(8, 2);
+
+        }
         public DbSet<Deneme> Denemes  { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<SubscriptionType> subscriptionTypes { get; set; }
+
+
     }
 }

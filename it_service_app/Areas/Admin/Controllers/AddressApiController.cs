@@ -75,7 +75,7 @@ namespace it_service_app.Areas.Admin.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(Guid key, string values)
         {
-            var data = _dbContext.Addresses.Find(key);
+            var data=_dbContext.Addresses.Find(key);
             if (data == null)
                 return BadRequest(new JSonResponseViewModel()
                 {
@@ -137,16 +137,17 @@ namespace it_service_app.Areas.Admin.Controllers
             return Ok(DataSourceLoader.Load(data, loadOptions));
         }
         [HttpGet]
-        public object StateLookUp(int cityId,DataSourceLoadOptions loadOptions) 
+        public object StateLookUp(DataSourceLoadOptions loadOptions) 
         {
             var data = _dbContext.States
-              .Where(x=>x.CityId==cityId)
+              
               .OrderBy(x => x.Name)
               .Select(x => new
               {
                    id= x.Id,
                    Value=x.Id,
-                   Text=$"{x.Name}"
+                   Text=$"{x.Name}",
+                   CityId=x.CityId
               });
 
             return Ok(DataSourceLoader.Load(data, loadOptions));

@@ -9,6 +9,8 @@ namespace it_service_app.Models.Entities
         public string Descripiton { get; set; }
         public int  Month { get; set; }
 
-     
+        public decimal Price { get; set; }
+
+
     }
 }
