@@ -25,13 +25,13 @@ namespace it_service_app.Controllers
         {
             _myDependency.Log("Home/Index");
 
-            var data=_dbContext.subscriptionTypes
-                     .ToList()
-                     .Select(x=>_mapper.Map<SubscriptionTypeViewModel>(x)) 
-                     .OrderBy(x=>x.Price)
-                     .ToList();
+            //var data=_dbContext.subscriptionTypes
+            //         .ToList()
+            //         .Select(x=>_mapper.Map<SubscriptionTypeViewModel>(x)) 
+            //         .OrderBy(x=>x.Price)
+            //         .ToList();
 
-            return View(data);
+            return View();
         }
     }
 }

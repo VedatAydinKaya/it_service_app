@@ -11,7 +11,7 @@ namespace it_service_app.Components
         private readonly MyContext _dbContext;
         private readonly IMapper _mapper;
 
-        public PricingTableViewComponent(MyContext dbContext,Mapper mapper)
+        public PricingTableViewComponent(MyContext dbContext,IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper; 
