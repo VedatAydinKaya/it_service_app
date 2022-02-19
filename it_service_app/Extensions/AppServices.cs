@@ -15,6 +15,7 @@ namespace it_service_app.Extensions
             {
                 options.AddProfile(typeof(PaymentProfile));
                 options.AddProfile(typeof(AccountProfile));
+                options.AddProfile(typeof(SubscriptionProfile));
                
             });
 

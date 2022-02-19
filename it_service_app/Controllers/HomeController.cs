@@ -1,6 +1,10 @@
-﻿using it_service_app.InjectExample;
+﻿using AutoMapper;
+using it_service_app.Data;
+using it_service_app.InjectExample;
+using it_service_app.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace it_service_app.Controllers
 {
@@ -8,17 +12,26 @@ namespace it_service_app.Controllers
     {
 
         private readonly IMyDependency _myDependency;
-        public HomeController(IMyDependency myDependency)  // constructor injection
+        private readonly MyContext _dbContext;
+        private readonly IMapper _mapper;
+        public HomeController(IMyDependency myDependency,MyContext dbContext,IMapper mapper)  // constructor injection
         {  
               _myDependency = myDependency;
-              Console.WriteLine();
+              _dbContext = dbContext;
+             _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-           // Console.WriteLine();
-            _myDependency.Log("Home INDEX Logged In =>>DATE::26.01.22 REST OF MYLIFE");
-            return View();
+            _myDependency.Log("Home/Index");
+
+            var data=_dbContext.subscriptionTypes
+                     .ToList()
+                     .Select(x=>_mapper.Map<SubscriptionTypeViewModel>(x)) 
+                     .OrderBy(x=>x.Price)
+                     .ToList();
+
+            return View(data);
         }
     }
 }
