@@ -62,6 +62,12 @@
                 updateUrl: `${url}/update`,
                 insertUrl: `${url}/insert`,
                 deleteUrl: `${url}/delete`,
+
+                   onBeforeSend(method, ajaxOptions) {
+                    ajaxOptions.xhrFields = { withCredentials: true };
+                    console.log(method);
+                    console.log(ajaxOptions);
+                }
               
             }),
             editing: {

@@ -84,6 +84,17 @@ namespace it_service_app.Areas.Admin.Controllers
                      ErrorMessage="Uyelik tipi guncellenemedi"
                 });
             
+             var result=_dbContext.SaveChanges();
+
+            if (result == 0)
+
+                return BadRequest(new JSonResponseViewModel()
+                {
+                     IsSuccess=false,
+                     ErrorMessage="Uyelik tipi guncellenemedi"
+                });
+                
+
             return Ok(new JSonResponseViewModel());
         }
         [HttpDelete]
