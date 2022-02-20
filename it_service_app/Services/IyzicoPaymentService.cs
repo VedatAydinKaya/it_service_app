@@ -119,7 +119,7 @@ namespace it_service_app.Services
             {
                 Locale = Locale.TR.ToString(),
                 ConversationId = conversationId,
-                BinNumber = binNumber,
+                BinNumber = binNumber.Substring(0,6),
                 Price = price.ToString(new CultureInfo("en-US")),
             };
 
