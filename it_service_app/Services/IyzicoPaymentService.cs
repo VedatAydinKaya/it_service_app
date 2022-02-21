@@ -52,59 +52,22 @@ namespace it_service_app.Services
                 Price = paymentModel.Price.ToString(new CultureInfo("en-US")),
                 PaidPrice = paymentModel.PaidPrice.ToString(new CultureInfo("en-US")),
                 Currency = Currency.TRY.ToString(),
-                BasketId = GenerateConverstaionId(),
+                BasketId = StringHelpers.GenerateUniqueCode(),
                 PaymentChannel = PaymentChannel.WEB.ToString(),
-                PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString(),    
-            };
+                PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString(),
+                PaymentCard = _mapper.Map<PaymentCard>(paymentModel.CardModel),
+                Buyer = _mapper.Map<Buyer>(paymentModel.Customer),
+                BillingAddress = _mapper.Map<Address>(paymentModel.Address),
 
-            paymentRequest.PaymentCard = _mapper.Map<PaymentCard>(paymentModel.CardModel);  // creates mapping confiugaration from  Cardmodel to PaymentCard mapping configuration dobe
-
-            var user = _userManager.FindByIdAsync(paymentModel.UserId).Result;
-
-            var buyer = new Buyer()
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Surname = user.Surname,
-                GsmNumber = user.PhoneNumber,
-                Email =user.Email,
-                IdentityNumber ="11111111110",
-                LastLoginDate = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-                RegistrationDate =$"{user.CreatedDate:yyyy-MM-dd HH:mm:ss}",
-                RegistrationAddress = "Cihannuma Mah. Barbaros Bulvarı No:9 Beşiktaş",
-                Ip = paymentModel.Ip,
-                City = "Istanbul",
-                Country = "Turkey",
-                ZipCode = "3473"
 
             };
-
-            paymentRequest.Buyer = buyer;
-
-            var  billingAdress = new Address()
-            {
-                ContactName =$"{user.Name} {user.Surname}",
-                City = "Istanbul",
-                Country = "Turkey",
-                Description = "Cihannuma Mah. Barbaros Bulvarı No:9 Beşiktaş",
-                ZipCode = "3473"
-            };
-
-            paymentRequest.BillingAddress= billingAdress;
-
 
             var basketItems = new List<BasketItem>();
 
-            var firstBasketItem = new BasketItem()
+            foreach (var basketModel in paymentModel.BasketList)
             {
-                Id = "BI101",
-                Name = "Binocular",
-                Category1 = "Collectibles",
-                Category2 = "Accessories",
-                ItemType = BasketItemType.VIRTUAL.ToString(),  // not required for ShippingAdress
-                Price = paymentModel.Price.ToString(),
-            };
-            basketItems.Add(firstBasketItem);
+                basketItems.Add(_mapper.Map<BasketItem>(basketModel));
+            }
 
             paymentRequest.BasketItems = basketItems;
 
@@ -112,31 +75,31 @@ namespace it_service_app.Services
         }
         public InstallmentModel CheckInstallments(string binNumber, decimal price)
         {
-             
-            var conversationId=GenerateConverstaionId();
+
+            var conversationId = GenerateConverstaionId();
 
             var request = new RetrieveInstallmentInfoRequest()
             {
                 Locale = Locale.TR.ToString(),
                 ConversationId = conversationId,
-                BinNumber = binNumber.Substring(0,6),
+                BinNumber = binNumber.Substring(0, 6),
                 Price = price.ToString(new CultureInfo("en-US")),
             };
 
             var result = InstallmentInfo.Retrieve(request, _options);
-            if (result.Status=="failure")
+            if (result.Status == "failure")
             {
                 throw new Exception(result.ErrorMessage);
             }
 
-            if (result.ConversationId!=conversationId)
+
+            if (result.ConversationId != conversationId)
             {
                 throw new Exception("Hatalı Istek Olusturuldu");
             }
 
-            var  resultModel= _mapper.Map<InstallmentModel>(result.InstallmentDetails[0]); // <Tdestination>(object source) = executes mapping from source object to T destination
+            var resultModel = _mapper.Map<InstallmentModel>(result.InstallmentDetails[0]); // <Tdestination>(object source) = executes mapping from source object to T destination
 
-            Console.WriteLine();
             return resultModel;
         }
         public PaymentResponseModel Pay(PaymentModel paymentModel)

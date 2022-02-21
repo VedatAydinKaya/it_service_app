@@ -12,17 +12,13 @@ namespace it_service_app.Models.Entities
 
         [StringLength(450)]
         public string UserId { get; set; }
-
-
         public int StateId { get; set; }
 
         [ForeignKey(nameof(StateId))]
         public virtual State  State{ get; set; }
 
-
         [ForeignKey(nameof(UserId))]
         public virtual ApplicationUser User { get; set; }
-
 
     }
 

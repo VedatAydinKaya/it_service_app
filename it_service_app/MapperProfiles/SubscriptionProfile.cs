@@ -9,6 +9,7 @@ namespace it_service_app.MapperProfiles
         public SubscriptionProfile()
         {
             CreateMap<SubscriptionType, SubscriptionTypeViewModel>().ReverseMap();
+            CreateMap<Address, AddressViewModel>().ReverseMap();
         }
     }
 }

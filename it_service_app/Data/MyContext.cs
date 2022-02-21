@@ -30,6 +30,10 @@ namespace it_service_app.Data
                 .Property(x => x.PaidAmount)
                 .HasPrecision(8, 2);
 
+            //builder.Entity<SubscriptionType>()
+            //    .Property(x=>x.Description)
+            //    .HasColumnName("Description");
+
         }
         public DbSet<Deneme> Denemes  { get; set; }
         public DbSet<Address> Addresses { get; set; }

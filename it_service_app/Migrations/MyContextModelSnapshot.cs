@@ -282,7 +282,7 @@ namespace it_service_app.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Descripiton")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Month")
