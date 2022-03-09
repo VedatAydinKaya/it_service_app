@@ -1,6 +1,7 @@
-## ECOMMERCE WEB APP ---  A WebSite was created where IT Service/Subscription packages were sold
+## It Service Web Project
+#### Description: After registration, a website was created where the customer can purchase IT service packages
 
-### Technologies
+####  Technologies
 C#, MSSQL, ASP.Net Core MVC 5, ASP.Net Core
 Identity,Entity Framework Core, Linq, Data annotation, Fluent Api,
 AutoMapper, Email verification, Devextreme, Bootstrap, Tag Helpers
