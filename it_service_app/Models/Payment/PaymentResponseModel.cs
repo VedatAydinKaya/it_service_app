@@ -2,7 +2,7 @@
 {
     public class PaymentResponseModel
     {
-        public string  Price { get; set; }
+        public string Price { get; set; }
         public string PaidPrice { get; set; }
         public int? Installment { get; set; }
         public string Currency { get; set; }

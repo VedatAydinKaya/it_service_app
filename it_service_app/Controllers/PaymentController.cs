@@ -57,7 +57,6 @@ namespace it_service_app.Controllers
             var result = _paymentService.CheckInstallments(binNumber, price);
             return Ok(result);
         }
-
         [Authorize]
         [HttpPost]
         public IActionResult Index(PaymentViewModel paymentViewModel)  // 5400360000000003
@@ -92,7 +91,7 @@ namespace it_service_app.Controllers
 
             if (data == null)
                 return RedirectToAction("Index", "Home");
-
+             
             var model = _mapper.Map<SubscriptionTypeViewModel>(data);
 
             ViewBag.Subs = model;
@@ -102,6 +101,7 @@ namespace it_service_app.Controllers
               .ToList()
               .Select(x => _mapper.Map<AddressViewModel>(x))
               .ToList();
+
 
             ViewBag.Addresses = addresses;
 

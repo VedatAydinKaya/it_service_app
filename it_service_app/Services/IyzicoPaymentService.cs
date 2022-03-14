@@ -108,6 +108,7 @@ namespace it_service_app.Services
             var payment = Payment.Create(request, _options);
 
             return _mapper.Map<PaymentResponseModel>(payment);
+
         }
     }
 }

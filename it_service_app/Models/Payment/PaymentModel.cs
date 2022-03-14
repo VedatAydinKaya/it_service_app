@@ -5,7 +5,7 @@ namespace it_service_app.Models.Payment
     public class PaymentModel
     {
         public string PaymentId { get; set; }
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } = 1000M;
         public decimal PaidPrice { get; set; }
         public int Installment { get; set; }
         public CardModel CardModel { get; set; }
